@@ -93,7 +93,8 @@ Mục đích: Ngăn chặn việc một cột dữ liệu bị mã hóa độc l
 + MixColumns: Áp dụng phép toán ma trận trộn lẫn dữ liệu theo từng cột để tạo sự khuếch tán.
 Phép toán phức tạp nhất trong AES. Mỗi cột 4-byte của State được xem như một đa thức bậc 3. Cột này sẽ được nhân với một ma trận biến đổi cố định trong trường hữu hạn Galois GF($2^8$).
 
-$$\begin{bmatrix} s'_{0,c} \\ s'_{1,c} \\ s'_{2,c} \\ s'_{3,c} \end{bmatrix} = \begin{bmatrix} 2 & 3 & 1 & 1 \\ 1 & 2 & 3 & 1 \\ 1 & 1 & 2 & 3 \\ 3 & 1 & 1 & 2 \end{bmatrix} \times \begin{bmatrix} s_{0,c} \\ s_{1,c} \\ s_{2,c} \\ s_{3,c} \end{bmatrix}$$
+<img width="477" height="166" alt="image" src="https://github.com/user-attachments/assets/248d693e-cba9-448f-948c-03917220a2eb" />
+
 
 Mục đích: Khiến cho mọi byte ở đầu ra của cột phụ thuộc vào tất cả 4 byte đầu vào của cột đó.
 
@@ -151,6 +152,9 @@ Sự biến đổi diễn ra như sau:
 
 <img width="692" height="177" alt="image" src="https://github.com/user-attachments/assets/6e972996-4ac0-4dd1-8eb5-64d480c27ae5" />
 
+2. tìm hiểu về thuật toán mã hoá bất đối xứng RSA
+   nguyên lý sinh cặp khoá bí mật, công khai
+
 Bước 3: MixColumns (Trộn cột)
 Ở bước này, AES lấy từng cột 4-byte riêng biệt và thực hiện phép nhân ma trận để trộn chúng lại với nhau.
 
@@ -168,3 +172,77 @@ toán tử logic XOR (Exclusive OR) từng bit một.
 
 Sau bước này, Vòng 1 kết thúc. Thuật toán lại lấy ma trận kết quả ném vào Vòng 2, làm y hệt các bước trên, và lặp lại liên tục 10 lần (với AES-128). Sau vòng cuối cùng, ma trận thu được chính là chuỗi ký tự mã hóa vô nghĩa mà hacker nhìn thấy.
 
+2. Tìm hiểu về thuật toán mã hoá bất đối xứng RSA nguyên lý sinh cặp khoá bí mật, công khai
+
+   
+RSA (Rivest–Shamir–Adleman) là một trong những hệ thống mã hóa bất đối xứng đầu tiên và được sử dụng rộng rãi nhất hiện nay để truyền dữ liệu an toàn. Nguyên lý hoạt động của RSA dựa trên sự bất đối xứng về mặt toán học: việc nhân hai số nguyên tố lớn với nhau thì rất dễ, nhưng việc phân tích tích số của chúng ngược lại thành hai số nguyên tố ban đầu lại cực kỳ khó (bài toán phân tích ra thừa số nguyên tố).
+
+Trong mã hóa bất đối xứng, mỗi bên sẽ có một cặp khóa: Khóa công khai (Public Key) dùng để mã hóa dữ liệu và Khóa bí mật (Private Key) dùng để giải mã.
+
+Nguyên lý sinh cặp khóa RSA
+Quy trình tạo ra cặp khóa công khai và bí mật trải qua 5 bước toán học chuẩn như sau:
+
+Bước 1: Chọn hai số nguyên tố lớn ($p$ và $q$)
+
+Hệ thống sẽ chọn ngẫu nhiên hai số nguyên tố rất lớn (trong thực tế, các số này thường dài từ 1024 đến 2048 bit).
+
+Điều kiện: $p \neq q$ và chúng phải được giữ bí mật tuyệt đối.
+
+Bước 2: Tính module ($n$)
+
+Tính tích của hai số nguyên tố vừa chọn:
+$$n = p \times q$$
+
+Số $n$ này sẽ được sử dụng làm module cho cả khóa công khai và khóa bí mật. 
+
+Độ dài của $n$ (tính bằng bit) chính là "độ dài khóa" (ví dụ: khóa RSA 2048-bit nghĩa là $n$ dài 2048 bit). $n$ được công bố công khai.
+
+Bước 3: Tính hàm Phi Euler ($\phi(n)$)
+
+Tính số lượng các số nguyên tố cùng nhau với $n$ (nhỏ hơn $n$). 
+
+Dựa vào tính chất của số nguyên tố, hàm này được tính bằng:
+
+$$\phi(n) = (p - 1) \times (q - 1)$$
+
+Giá trị $\phi(n)$ phải được giữ bí mật để phục vụ cho việc tạo khóa bí mật ở Bước 5.
+
+Bước 4: Chọn số mũ công khai ($e$)
+
+Chọn một số nguyên $e$ (public exponent) sao cho:$1 < e < \phi(n)$$e$ và $\phi(n)$ là hai số nguyên tố cùng nhau (tức là ước chung lớn nhất $\text{ƯCLN}(e, \phi(n)) = 1$).
+
+Số $e$ này thường được chọn là các số nguyên tố Fermat để tối ưu tốc độ mã hóa (giá trị phổ biến nhất trong thực tế là $65537$).
+
+Bước 5: Tính số mũ bí mật ($d$)
+
+Tính số $d$ (private exponent) sao cho nó là nghịch đảo modulo của $e$ theo module $\phi(n)$. 
+
+Nói cách khác:$$d \times e \equiv 1 \pmod{\phi(n)}$$Điều này có nghĩa là khi chia $(d \times e)$ cho $\phi(n)$, số dư phải là 1. Người ta thường dùng Thuật toán Euclid mở rộng để tìm ra $d$.
+
+Sau 5 bước trên, chúng ta thu được cặp khóa:Khóa công khai (Public Key): Cặp số $(n, e)$. Bạn gửi cặp số này cho bất kỳ ai để họ mã hóa dữ liệu gửi cho bạn.Khóa bí mật (Private Key): Cặp số $(n, d)$. Bạn phải giữ kín số $d$. Các thông số $p, q$ và $\phi(n)$ lúc này có thể bị xóa bỏ hoặc cất giấu, nhưng không bao giờ được tiết lộ.
+
+Ví dụ minh họa
+
+Để dễ hình dung, hãy xem quy trình với các con số nhỏ:
+
+Chọn $p, q$: Chọn $p = 61$ và $q = 53$.
+
+Tính $n$: $n = 61 \times 53 = 3233$.
+
+Tính $\phi(n)$: $\phi(n) = (61 - 1) \times (53 - 1) = 60 \times 52 = 3120$.
+
+Chọn $e$: Chọn một số nguyên tố cùng nhau với $3120$. 
+
+Chọn $e = 17$ (vì $\text{ƯCLN}(17, 3120) = 1$).
+
+Tính $d$: Tìm $d$ sao cho $17 \times d \equiv 1 \pmod{3120}$. 
+
+Bằng thuật toán Euclid mở rộng, ta tìm được $d = 2753$. (Thử lại: $17 \times 2753 = 46801$, và $46801 = 15 \times 3120 + 1$).
+
+Kết quả:
+
+Khóa công khai: $(n=3233, e=17)$
+
+Khóa bí mật: $(n=3233, d=2753)$
+
+Nếu một tin tặc chặn được khóa công khai $(3233, 17)$, họ biết $n = 3233$. Để tìm được khóa bí mật $d$, họ phải tính được $\phi(n)$, nghĩa là họ buộc phải phân tích số $3233$ ngược lại thành $61 \times 53$. Với số $3233$, việc này mất chưa tới 1 giây. Nhưng với một số $n$ có kích thước 2048 bit (khoảng 617 chữ số thập phân), các siêu máy tính hiện đại nhất thế giới cũng phải mất hàng triệu năm để phân tích ra $p$ và $q$.
