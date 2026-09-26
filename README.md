@@ -172,14 +172,18 @@ toán tử logic XOR (Exclusive OR) từng bit một.
 
 Sau bước này, Vòng 1 kết thúc. Thuật toán lại lấy ma trận kết quả ném vào Vòng 2, làm y hệt các bước trên, và lặp lại liên tục 10 lần (với AES-128). Sau vòng cuối cùng, ma trận thu được chính là chuỗi ký tự mã hóa vô nghĩa mà hacker nhìn thấy.
 
-2. Tìm hiểu về thuật toán mã hoá bất đối xứng RSA nguyên lý sinh cặp khoá bí mật, công khai
 
-   
-RSA (Rivest–Shamir–Adleman) là một trong những hệ thống mã hóa bất đối xứng đầu tiên và được sử dụng rộng rãi nhất hiện nay để truyền dữ liệu an toàn. Nguyên lý hoạt động của RSA dựa trên sự bất đối xứng về mặt toán học: việc nhân hai số nguyên tố lớn với nhau thì rất dễ, nhưng việc phân tích tích số của chúng ngược lại thành hai số nguyên tố ban đầu lại cực kỳ khó (bài toán phân tích ra thừa số nguyên tố).
+### 2. Tìm hiểu về thuật toán mã hoá bất đối xứng RSA nguyên lý sinh cặp khoá bí mật, công khai
+
+RSA (Rivest–Shamir–Adleman) là một trong những hệ thống mã hóa bất đối xứng đầu tiên và được sử dụng rộng rãi nhất hiện nay để truyền dữ liệu an toàn. 
+
+Nguyên lý hoạt động của RSA dựa trên sự bất đối xứng về mặt toán học: việc nhân hai số nguyên tố lớn với nhau thì rất dễ, nhưng việc phân tích tích số của chúng ngược lại thành hai số nguyên tố ban đầu lại cực kỳ khó (bài toán phân tích ra thừa số nguyên tố).
 
 Trong mã hóa bất đối xứng, mỗi bên sẽ có một cặp khóa: Khóa công khai (Public Key) dùng để mã hóa dữ liệu và Khóa bí mật (Private Key) dùng để giải mã.
 
 Nguyên lý sinh cặp khóa RSA
+
+
 Quy trình tạo ra cặp khóa công khai và bí mật trải qua 5 bước toán học chuẩn như sau:
 
 Bước 1: Chọn hai số nguyên tố lớn ($p$ và $q$)
@@ -209,7 +213,9 @@ Giá trị $\phi(n)$ phải được giữ bí mật để phục vụ cho việ
 
 Bước 4: Chọn số mũ công khai ($e$)
 
-Chọn một số nguyên $e$ (public exponent) sao cho:$1 < e < \phi(n)$$e$ và $\phi(n)$ là hai số nguyên tố cùng nhau (tức là ước chung lớn nhất $\text{ƯCLN}(e, \phi(n)) = 1$).
+Chọn một số nguyên $e$ (public exponent) sao cho:$1 < e < \phi(n)$$e$ và $\phi(n)$ là hai số nguyên tố cùng nhau (tức là ước chung lớn nhất 
+
+$\text{ƯCLN}(e, \phi(n)) = 1$).
 
 Số $e$ này thường được chọn là các số nguyên tố Fermat để tối ưu tốc độ mã hóa (giá trị phổ biến nhất trong thực tế là $65537$).
 
@@ -217,7 +223,9 @@ Bước 5: Tính số mũ bí mật ($d$)
 
 Tính số $d$ (private exponent) sao cho nó là nghịch đảo modulo của $e$ theo module $\phi(n)$. 
 
-Nói cách khác:$$d \times e \equiv 1 \pmod{\phi(n)}$$Điều này có nghĩa là khi chia $(d \times e)$ cho $\phi(n)$, số dư phải là 1. Người ta thường dùng Thuật toán Euclid mở rộng để tìm ra $d$.
+Nói cách khác:$$d \times e \equiv 1 \pmod{\phi(n)}$$
+
+Điều này có nghĩa là khi chia $(d \times e)$ cho $\phi(n)$, số dư phải là 1. Người ta thường dùng Thuật toán Euclid mở rộng để tìm ra $d$.
 
 Sau 5 bước trên, chúng ta thu được cặp khóa:Khóa công khai (Public Key): Cặp số $(n, e)$. Bạn gửi cặp số này cho bất kỳ ai để họ mã hóa dữ liệu gửi cho bạn.Khóa bí mật (Private Key): Cặp số $(n, d)$. Bạn phải giữ kín số $d$. Các thông số $p, q$ và $\phi(n)$ lúc này có thể bị xóa bỏ hoặc cất giấu, nhưng không bao giờ được tiết lộ.
 
