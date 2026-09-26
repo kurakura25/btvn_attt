@@ -57,7 +57,9 @@ Mở rộng chuỗi R{i-1} từ 32-bit thành 48-bit bằng cách nhân bản m�
 
 Cộng khóa con (XOR): Lấy kết quả 48-bit vừa mở rộng XOR với khóa con Ki 48-bit.
 
-Thay thế (Substitution - S-boxes):Chia chuỗi 48-bit sau khi XOR thành 8 nhóm, mỗi nhóm 6-bit.
+Thay thế (Substitution - S-boxes):
+
+Chia chuỗi 48-bit sau khi XOR thành 8 nhóm, mỗi nhóm 6-bit.
 
 Mỗi nhóm 6-bit được đưa qua một hộp thay thế S_j ($j = 1 \dots 8$) để thu về 4-bit.
 
@@ -69,7 +71,9 @@ Bit đầu (1) và bit cuối (6) ghép lại tạo thành số hàng (0–3).
 
 Gộp 8 kết quả 4-bit lại thành chuỗi 32-bit.
 
-Hoán vị (Permutation - P-box): Xáo trộn vị trí của chuỗi 32-bit sau S-box theo một bảng hoán vị P cố định nhằm tạo sự khuếch tán (diffusion).
+Hoán vị (Permutation - P-box): 
+
+Xáo trộn vị trí của chuỗi 32-bit sau S-box theo một bảng hoán vị P cố định nhằm tạo sự khuếch tán (diffusion).
 
 Thuật toán sinh khóa con (Key Schedule)
 
@@ -83,7 +87,9 @@ Dịch trái xoay vòng (Left Circular Shift): Tại mỗi vòng $i$:
 
 Cả C{i-1} và D{i-1} được dịch trái xoay vòng 1 bit (ở các vòng 1, 2, 9, 16) hoặc 2 bit (ở các vòng còn lại) để tạo thành Ci và Di.
 
-Biến đổi PC-2 (Permuted Choice 2): Ghép Ci và Di thành 56-bit, sau đó chọn ra và hoán vị 48-bit để thu được khóa con Ki.
+Biến đổi PC-2 (Permuted Choice 2): 
+
+Ghép Ci và Di thành 56-bit, sau đó chọn ra và hoán vị 48-bit để thu được khóa con Ki.
 
 Quy trình giải mã
 
@@ -115,21 +121,25 @@ Chuyển bản rõ thành 64 bit nhị phân và đảo vị trí các bit theo 
 
 Sau khi hoán vị IP: Dữ liệu xáo trộn thành chuỗi 64-bit mới.
 
-Chia đôi khối dữ liệu thành 2 nửa 32-bit:$L_0$ (32 bit trái): 11001100 00000000 11001100 00000000 (Hex: CC00CC00)$R_0$ (32 bit phải): 11111010 11111010 11010000 00000100 (Hex: FAFADA04)3. 
+Chia đôi khối dữ liệu thành 2 nửa 32-bit:
 
-Bước 2: Sinh khóa con $K_1$ cho Vòng 1Khóa gốc 64 bit qua bảng PC-1 bị bỏ đi 8 bit kiểm tra, còn lại 56 bit.
+$L_0$ (32 bit trái): 11001100 00000000 11001100 00000000 (Hex: CC00CC00)$R_0$ (32 bit phải): 11111010 11111010 11010000 00000100 (Hex: FAFADA04)3. 
 
-Chia thành $C_0$ (28 bit) và $D_0$ (28 bit).
+Bước 2: Sinh khóa con K1 cho Vòng 1Khóa gốc 64 bit qua bảng PC-1 bị bỏ đi 8 bit kiểm tra, còn lại 56 bit.
 
-Ở Vòng 1, dịch trái xoay vòng $C_0$ và $D_0$ đi 1 bit thu được $C_1$ và $D_1$.
+Chia thành C0 (28 bit) và D0 (28 bit).
 
-Ghép $C_1D_1$ lại và đưa qua bảng PC-2 để chọn ra 48 bit làm khóa con $K_1$.
+Ở Vòng 1, dịch trái xoay vòng C0 và D0 đi 1 bit thu được C1 và D1.
 
-Giả sử $K_1$ thu được là: 000110 110000 001111 111100 000011 101100 111100 011100 (48 bit).
+Ghép C1D1 lại và đưa qua bảng PC-2 để chọn ra 48 bit làm khóa con K1.
+
+Giả sử K1 thu được là: 000110 110000 001111 111100 000011 101100 111100 011100 (48 bit).
 
 Bước 3: Tính toán Vòng 1 (Round 1)
 
-Mục tiêu là tính cặp $(L_1, R_1)$ theo công thức:$L_1 = R_0$$R_1 = L_0 \oplus F(R_0, K_1)$
+Mục tiêu là tính cặp $(L_1, R_1)$ theo công thức:
+
+$L_1 = R_0$$R_1 = L_0 \oplus F(R_0, K_1)$
 
 Thực thi Hàm Feistel $F(R_0, K_1)$:
 
@@ -137,7 +147,9 @@ Tác vụ 1:
 
 Mở rộng $R_0$ (Expansion E-box)
 
-Biến $R_0$ (32 bit) thành 48 bit bằng cách nhân bản các bit ở mép:$$E(R_0) = \text{Chuỗi 48 bit mới}$$
+Biến $R_0$ (32 bit) thành 48 bit bằng cách nhân bản các bit ở mép:
+
+$$E(R_0) = \text{Chuỗi 48 bit mới}$$
 
 Tác vụ 2: Cộng khóa con (XOR với $K_1$)Lấy $E(R_0)$ 48 bit XOR với $K_1$ 48 bit.
 
@@ -153,13 +165,23 @@ Xác định Hàng: Lấy bit đầu (0) và bit cuối (1) $\rightarrow$
 
 Chuỗi 01 = Hàng 1 (tính từ 0, 1, 2, 3).
 
-Xác định Cột: Lấy 4 bit giữa (1101) $\rightarrow$ Chuỗi 1101 = Cột 13 (tính từ 0 đến 15).
+Xác định Cột: 
 
-Tra bảng $S_1$: Giao giữa Hàng 1 và Cột 13 trong bảng $S_1$ là số 5 (biểu diễn 4 bit nhị phân là 0101).Làm tương tự cho 7 nhóm còn lại, ta chuyển từ 8 nhóm (mỗi nhóm 6 bit) thành 8 nhóm (mỗi nhóm 4 bit) và gộp lại thu được chuỗi 32 bit.
+Lấy 4 bit giữa (1101) $\rightarrow$ 
+
+Chuỗi 1101 = Cột 13 (tính từ 0 đến 15).
+
+Tra bảng $S_1$: 
+
+Giao giữa Hàng 1 và Cột 13 trong bảng $S_1$ là số 5 (biểu diễn 4 bit nhị phân là 0101).
+
+Làm tương tự cho 7 nhóm còn lại, ta chuyển từ 8 nhóm (mỗi nhóm 6 bit) thành 8 nhóm (mỗi nhóm 4 bit) và gộp lại thu được chuỗi 32 bit.
 
 Tác vụ 4: Hoán vị P (P-box)Xáo trộn 32 bit thu được từ bước S-box qua bảng hoán vị P cố định. 
 
-Kết quả nhận được chính là đầu ra của hàm $F(R_0, K_1)$ (32 bit).Tính giá trị $R_1$:Lấy $L_0$ (32 bit) XOR với kết quả hàm $F(R_0, K_1)$ (32 bit) vừa tính ra:
+Kết quả nhận được chính là đầu ra của hàm $F(R_0, K_1)$ (32 bit).
+
+Tính giá trị $R_1$:Lấy $L_0$ (32 bit) XOR với kết quả hàm $F(R_0, K_1)$ (32 bit) vừa tính ra:
 
 $$R_1 = L_0 \oplus F(R_0, K_1)$$
 
