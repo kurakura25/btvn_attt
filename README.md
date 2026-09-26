@@ -128,9 +128,13 @@ Sau khi hoán vị IP: Dữ liệu xáo trộn thành chuỗi 64-bit mới.
 
 Chia đôi khối dữ liệu thành 2 nửa 32-bit:
 
-$L_0$ (32 bit trái): 11001100 00000000 11001100 00000000 (Hex: CC00CC00)$R_0$ (32 bit phải): 11111010 11111010 11010000 00000100 (Hex: FAFADA04)3. 
+$L_0$ (32 bit trái): 11001100 00000000 11001100 00000000 (Hex: CC00CC00)
 
-Bước 2: Sinh khóa con K1 cho Vòng 1Khóa gốc 64 bit qua bảng PC-1 bị bỏ đi 8 bit kiểm tra, còn lại 56 bit.
+$R_0$ (32 bit phải): 11111010 11111010 11010000 00000100 (Hex: FAFADA04)3. 
+
+Bước 2: Sinh khóa con K1 cho Vòng 1
+
+Khóa gốc 64 bit qua bảng PC-1 bị bỏ đi 8 bit kiểm tra, còn lại 56 bit.
 
 Chia thành C0 (28 bit) và D0 (28 bit).
 
@@ -144,7 +148,9 @@ Bước 3: Tính toán Vòng 1 (Round 1)
 
 Mục tiêu là tính cặp $(L_1, R_1)$ theo công thức:
 
-$L_1 = R_0$$R_1 = L_0 \oplus F(R_0, K_1)$
+$L_1 = R_0
+
+$$R_1 = L_0 \oplus F(R_0, K_1)$
 
 Thực thi Hàm Feistel $F(R_0, K_1)$:
 
@@ -474,6 +480,7 @@ Mỗi người sử dụng RSA sẽ có một cặp khóa:
 Giả sử hệ thống có hai bên:
 
 Alice: người gửi.
+
 Bob: người nhận.
 
 Mỗi bên có một cặp khóa:
@@ -554,15 +561,7 @@ M = "Chuyen 1000000 VND cho Bob"
 Bước 2: Alice tính giá trị Hash
 H = Hash(M)
 
-Thông thường hệ thống sẽ sử dụng một hàm băm như SHA-256:
-
-Message
-   │
-   ▼
- SHA-256
-   │
-   ▼
- Hash
+Thông thường hệ thống sẽ sử dụng một hàm băm như SHA-256
 
 Bước 3: Alice tạo chữ ký số
 
@@ -572,6 +571,7 @@ Signature = RSA_Sign(
     PrivateKey_Alice,
     Hash(Message)
 )
+
 Bước 4: Alice gửi dữ liệu cho Bob
 
 Alice gửi:
@@ -889,23 +889,6 @@ So sánh tốc độ
 
 Khi xử lý cùng một lượng dữ liệu, AES thường nhanh hơn RSA rất nhiều.
 
-Minh họa:
-
-Thời gian xử lý
-│
-│                         RSA
-│                         ███████████████████
-│
-│
-│
-│     AES
-│     █
-│     █
-│     █
-│
-└──────────────────────────────────►
-             Dữ liệu
-
 AES được thiết kế để mã hóa dữ liệu với tốc độ cao.
 
 RSA sử dụng các phép toán số học trên các số nguyên rất lớn nên chi phí tính toán cao hơn.
@@ -958,39 +941,6 @@ Giả sử cần mã hóa:
 
 1 GB
 
-AES có thể trực tiếp xử lý các dữ liệu này:
-
-File
- │
- ▼
-AES
- │
- ▼
-Encrypted File
-
-Trong khi RSA không được thiết kế để mã hóa trực tiếp các file lớn.
-
-Do đó không nên thực hiện:
-
-File 1 GB
-   │
-   ▼
-  RSA
-   │
-   ▼
-Encrypted File
-
-Mà nên sử dụng:
-
-File 1 GB
-   │
-   ▼
-  AES
-   │
-   ▼
-Encrypted File
-
-RSA chỉ đảm nhận một phần nhỏ, chẳng hạn bảo vệ khóa AES.
 
 Thực nghiệm đo thời gian
 
@@ -1259,15 +1209,6 @@ Data = AES_Decrypt(
     Ciphertext
 )
 
-Kết quả:
-
-Encrypted File
-      │
-      ▼
-    AES Key
-      │
-      ▼
-Original File
 
 Kết hợp RSA + AES + Chữ ký số
 
