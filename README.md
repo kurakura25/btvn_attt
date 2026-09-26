@@ -219,6 +219,12 @@ Bản mã cuối cùng (Ciphertext):
 
 Ví dụ thu được chuỗi Hex 64-bit: 85E813540F0AB405.
 
+Kết quả chạy thử chương trình 
+
+<img width="1917" height="1078" alt="image" src="https://github.com/user-attachments/assets/84b9c809-0243-4835-83eb-af76825d44a9" />
+
+
+
 ### Thuật toán AES (Advanced Encryption Standard)
 AES (hay Rijndael) ra đời năm 2001 để thay thế DES. Đây là tiêu chuẩn mã hóa hiện đại, cực kỳ an toàn và đang được sử dụng phổ biến nhất trên toàn thế giới (từ Wifi, SSL/TLS, đến mã hóa tệp tin).
 
@@ -339,6 +345,8 @@ Ma trận State vừa trải qua 3 bước nhào lộn sẽ được trộn thê
 toán tử logic XOR (Exclusive OR) từng bit một.
 
 Sau bước này, Vòng 1 kết thúc. Thuật toán lại lấy ma trận kết quả ném vào Vòng 2, làm y hệt các bước trên, và lặp lại liên tục 10 lần (với AES-128). Sau vòng cuối cùng, ma trận thu được chính là chuỗi ký tự mã hóa vô nghĩa mà hacker nhìn thấy.
+
+<img width="1907" height="1078" alt="image" src="https://github.com/user-attachments/assets/cf49ef45-472a-4178-8005-e512d735bae9" />
 
 
 ### 2. Tìm hiểu về thuật toán mã hoá bất đối xứng RSA nguyên lý sinh cặp khoá bí mật, công khai
