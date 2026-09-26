@@ -300,7 +300,7 @@ RSA có thể được sử dụng cho nhiều mục đích:
 
 Mỗi người sử dụng RSA sẽ có một cặp khóa:
 
-```text
+
                     RSA KEY PAIR
                          │
               ┌──────────┴──────────┐
