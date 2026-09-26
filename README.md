@@ -3,7 +3,7 @@
 ## Họ và tên: Từ Văn Hải
 ## Lớp: K59.KMT.K01
 
-1. Tìm hiểu thuật toán mã hoá hiện đại DES, AES mô tả đc thuật toán, quy trình mã hoá/giải mã
+### 1. Tìm hiểu thuật toán mã hoá hiện đại DES, AES mô tả đc thuật toán, quy trình mã hoá/giải mã
    
 Thuật toán mã hóa DES (Data Encryption Standard)
 
@@ -47,21 +47,23 @@ Tại mỗi vòng thứ i (với i từ 1 đến 16), thuật toán sử dụng 
 
 Trong đó $\\oplus$ là phép toán XOR, và $F$ là Hàm Feistel (F-Function) — thành phần quan trọng nhất tạo nên tính phi tuyến tính của DES.
 
-Hàm Feistel $F(R_{i-1}, K_i)$
+Hàm Feistel 
 
-Hàm $F$ nhận đầu vào là nửa khối $R_{i-1}$ (32-bit) và khóa con $K_i$ (48-bit) để trả về một chuỗi 32-bit:
+Hàm F nhận đầu vào là nửa khối R{i-1} (32-bit) và khóa con Ki (48-bit) để trả về một chuỗi 32-bit:
 
 Mở rộng (Expansion - E-box): 
 
-Mở rộng chuỗi $R_{i-1}$ từ 32-bit thành 48-bit bằng cách nhân bản một số bit theo bảng mở rộng E.
+Mở rộng chuỗi R{i-1} từ 32-bit thành 48-bit bằng cách nhân bản một số bit theo bảng mở rộng E.
 
-Cộng khóa con (XOR): Lấy kết quả 48-bit vừa mở rộng XOR với khóa con $K_i$ 48-bit.
+Cộng khóa con (XOR): Lấy kết quả 48-bit vừa mở rộng XOR với khóa con Ki 48-bit.
 
 Thay thế (Substitution - S-boxes):Chia chuỗi 48-bit sau khi XOR thành 8 nhóm, mỗi nhóm 6-bit.
 
-Mỗi nhóm 6-bit được đưa qua một hộp thay thế $S_j$ ($j = 1 \dots 8$) để thu về 4-bit.
+Mỗi nhóm 6-bit được đưa qua một hộp thay thế S_j ($j = 1 \dots 8$) để thu về 4-bit.
 
-Cách tra S-box: Bit đầu (1) và bit cuối (6) ghép lại tạo thành số hàng (0–3). 
+Cách tra S-box: 
+
+Bit đầu (1) và bit cuối (6) ghép lại tạo thành số hàng (0–3). 
 
 4 bit giữa (2–5) ghép lại tạo thành số cột (0–15).
 
@@ -77,9 +79,11 @@ Biến đổi PC-1 (Permuted Choice 1):
 
 Loại bỏ 8 bit kiểm tra chẵn lẻ (các bit thứ 8, 16, 24, 32, 40, 48, 56, 64), hoán vị 56 bit còn lại và chia thành hai nửa 28-bit: $C_0$ và $D_0$.
 
-Dịch trái xoay vòng (Left Circular Shift): Tại mỗi vòng $i$:Cả $C_{i-1}$ và $D_{i-1}$ được dịch trái xoay vòng 1 bit (ở các vòng 1, 2, 9, 16) hoặc 2 bit (ở các vòng còn lại) để tạo thành $C_i$ và $D_i$.
+Dịch trái xoay vòng (Left Circular Shift): Tại mỗi vòng $i$:
 
-Biến đổi PC-2 (Permuted Choice 2): Ghép $C_i$ và $D_i$ thành 56-bit, sau đó chọn ra và hoán vị 48-bit để thu được khóa con $K_i$.
+Cả C{i-1} và D{i-1} được dịch trái xoay vòng 1 bit (ở các vòng 1, 2, 9, 16) hoặc 2 bit (ở các vòng còn lại) để tạo thành Ci và Di.
+
+Biến đổi PC-2 (Permuted Choice 2): Ghép Ci và Di thành 56-bit, sau đó chọn ra và hoán vị 48-bit để thu được khóa con Ki.
 
 Quy trình giải mã
 
@@ -87,7 +91,7 @@ Nhờ tính chất toán học của mạng Feistel, quy trình giải mã DES d
 
 Đầu vào giải mã là Bản mã (Ciphertext) 64-bit.
 
-Điểm khác biệt duy nhất: Các khóa con $K_i$ được đưa vào quy trình theo thứ tự ngược lại, bắt đầu từ $K_{16}$ giảm dần về $K_1$.
+Điểm khác biệt duy nhất: Các khóa con Ki được đưa vào quy trình theo thứ tự ngược lại, bắt đầu từ K16 giảm dần về K1.
 
 Mô tả thuật toán:
 
@@ -107,7 +111,9 @@ Chuyển bản rõ thành 64 bit nhị phân và đảo vị trí các bit theo 
 
 Đầu vào (64 bit): 
 
-00000001 00100011 01000101 01100111 10001001 10101011 11001101 11101111Sau khi hoán vị IP: Dữ liệu xáo trộn thành chuỗi 64-bit mới.
+00000001 00100011 01000101 01100111 10001001 10101011 11001101 11101111
+
+Sau khi hoán vị IP: Dữ liệu xáo trộn thành chuỗi 64-bit mới.
 
 Chia đôi khối dữ liệu thành 2 nửa 32-bit:$L_0$ (32 bit trái): 11001100 00000000 11001100 00000000 (Hex: CC00CC00)$R_0$ (32 bit phải): 11111010 11111010 11010000 00000100 (Hex: FAFADA04)3. 
 
