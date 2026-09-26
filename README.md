@@ -43,7 +43,9 @@ Quy trình mã hóa tổng thể
 
 Chi tiết cấu trúc một vòng Feistel
 
-Tại mỗi vòng thứ i (với i từ 1 đến 16), thuật toán sử dụng khóa con Ki (48-bit) và biến đổi dữ liệu theo công thức:L_i = R_{i-1}R_i = L_{i-1} \\oplus F(R_{i-1}, Ki)
+Tại mỗi vòng thứ i (với i từ 1 đến 16), thuật toán sử dụng khóa con Ki (48-bit) và biến đổi dữ liệu theo công thức:
+
+L_i = R_{i-1}R_i = L_{i-1} \\oplus F(R_{i-1}, Ki)
 
 Trong đó $\\oplus$ là phép toán XOR, và $F$ là Hàm Feistel (F-Function) — thành phần quan trọng nhất tạo nên tính phi tuyến tính của DES.
 
