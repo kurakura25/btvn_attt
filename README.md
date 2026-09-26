@@ -1,19 +1,17 @@
-1\. 
+# Bài tập về nhà môn An toàn và bảo mật thông tin
+
+## Họ và tên: Từ Văn Hải
+## Lớp: K59.KMT.K01
+
+1. 
 
 Thuật toán mã hóa DES (Data Encryption Standard)
 
-
-
 Được IBM phát triển và chính phủ Mỹ áp dụng làm tiêu chuẩn vào năm 1977, DES hiện tại đã bị coi là lỗi thời và không còn an toàn do độ dài khóa quá ngắn.
-
-
 
 Kích thước khối (Block size): 64-bit (chia dữ liệu thành các cục 64-bit để mã hóa).
 
-
-
 Kích thước khóa (Key size): 64-bit, nhưng 8 bit được dùng để kiểm tra lỗi (parity), do đó khóa thực tế chỉ dài 56-bit.
-
 
 
 Cấu trúc lõi: Mạng Feistel (Feistel Network) với 16 vòng (rounds).
@@ -32,9 +30,9 @@ Quy trình mã hóa tổng thể
 
 
 
-\#### Nửa Trái: L\_0
+#### Nửa Trái: L_0
 
-\#### Nửa Phải: R\_0
+#### Nửa Phải: R_0
 
 
 
@@ -48,7 +46,7 @@ Quy trình mã hóa tổng thể
 
 Chi tiết cấu trúc một vòng Feistel
 
-Tại mỗi vòng thứ i (với i từ 1 đến 16), thuật toán sử dụng khóa con Ki (48-bit) và biến đổi dữ liệu theo công thức:L\_i = R\_{i-1}R\_i = L\_{i-1} \\oplus F(R\_{i-1}, K\_i)
+Tại mỗi vòng thứ i (với i từ 1 đến 16), thuật toán sử dụng khóa con Ki (48-bit) và biến đổi dữ liệu theo công thức:L_i = R_{i-1}R_i = L_{i-1} \\oplus F(R_{i-1}, Ki)
 
 Trong đó $\\oplus$ là phép toán XOR, và $F$ là Hàm Feistel (F-Function) — thành phần quan trọng nhất tạo nên tính phi tuyến tính của DES.
 
