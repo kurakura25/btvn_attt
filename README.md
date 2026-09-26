@@ -227,6 +227,10 @@ Bước 5: Tính số mũ bí mật ($d$)
 
 Tính số $d$ (private exponent) sao cho nó là nghịch đảo modulo của $e$ theo module $\phi(n)$. 
 
+
+
+
+
 Nói cách khác:
 
 $$d \times e \equiv 1 \pmod{\phi(n)}$$
@@ -272,3 +276,934 @@ Khóa công khai: $(n=3233, e=17)$
 Khóa bí mật: $(n=3233, d=2753)$
 
 Nếu một tin tặc chặn được khóa công khai $(3233, 17)$, họ biết $n = 3233$. Để tìm được khóa bí mật $d$, họ phải tính được $\phi(n)$, nghĩa là họ buộc phải phân tích số $3233$ ngược lại thành $61 \times 53$. Với số $3233$, việc này mất chưa tới 1 giây. Nhưng với một số $n$ có kích thước 2048 bit (khoảng 617 chữ số thập phân), các siêu máy tính hiện đại nhất thế giới cũng phải mất hàng triệu năm để phân tích ra $p$ và $q$.
+
+### 3. Trình bày các mô hình hình áp dụng thuật toán RSA xác thực người gửi, xác thực người nhận, so sánh thời gian mã hoá/giải mã của RSA với AES và đưa ra các dùng kết hợp sức mạnh của RSA và AES.
+
+RSA (Rivest–Shamir–Adleman) là một thuật toán mật mã khóa công khai (Public Key Cryptography), sử dụng một cặp khóa gồm:
+
+- **Public Key (khóa công khai):** có thể công khai cho mọi người.
+- **Private Key (khóa riêng):** phải được bảo mật và chỉ chủ sở hữu được sử dụng.
+
+RSA có thể được sử dụng cho nhiều mục đích:
+
+1. Mã hóa và giải mã dữ liệu.
+
+2. Xác thực người gửi.
+
+3. Xác thực tính toàn vẹn của dữ liệu thông qua chữ ký số.
+
+4. Bảo vệ hoặc trao đổi khóa phiên.
+
+5. Kết hợp với AES để xây dựng hệ thống mã hóa lai.
+
+#### Nguyên lý khóa RSA
+
+Mỗi người sử dụng RSA sẽ có một cặp khóa:
+
+```text
+                    RSA KEY PAIR
+                         │
+              ┌──────────┴──────────┐
+              │                     │
+        Public Key             Private Key
+      (Khóa công khai)        (Khóa riêng)
+              │                     │
+       Có thể công khai        Phải bảo mật
+
+Giả sử hệ thống có hai bên:
+
+Alice: người gửi.
+Bob: người nhận.
+
+Mỗi bên có một cặp khóa:
+
+Alice:
+    Public Key_Alice
+    Private Key_Alice
+
+Bob:
+    Public Key_Bob
+    Private Key_Bob
+
+Mô hình RSA xác thực người gửi
+
+Mục đích
+
+Mô hình này được sử dụng khi Bob cần xác định:
+
+Thông điệp có thực sự được gửi bởi Alice hay không?
+
+RSA được sử dụng để tạo chữ ký số (Digital Signature).
+
+Alice sử dụng Private Key của Alice để ký.
+Bob sử dụng Public Key của Alice để xác minh chữ ký.
+
+Mô hình:
+
+                     ALICE
+                  Người gửi
+                      │
+                      │ Message
+                      ▼
+                 Hash(Message)
+                      │
+                      ▼
+          ┌────────────────────────┐
+          │  Private Key - Alice   │
+          └────────────────────────┘
+                      │
+                      ▼
+                Digital Signature
+                      │
+                      │
+          ┌───────────┴───────────┐
+          │                       │
+          ▼                       ▼
+       Message              Signature
+          │                       │
+          └───────────┬───────────┘
+                      │
+                      ▼
+                     BOB
+                 Người nhận
+                      │
+             ┌────────┴────────┐
+             │                 │
+             ▼                 ▼
+       Hash(Message)     Verify Signature
+                               │
+                               ▼
+                     Public Key - Alice
+                               │
+                               ▼
+                    ┌──────────┴──────────┐
+                    │                     │
+                  Hợp lệ               Không hợp lệ
+                    │                     │
+                    ▼                     ▼
+             Alice đã ký          Chữ ký sai hoặc
+             thông điệp           dữ liệu bị thay đổi
+
+Các bước thực hiện
+
+Bước 1: Alice tạo thông điệp
+
+M = "Chuyen 1000000 VND cho Bob"
+
+Bước 2: Alice tính giá trị Hash
+H = Hash(M)
+
+Thông thường hệ thống sẽ sử dụng một hàm băm như SHA-256:
+
+Message
+   │
+   ▼
+ SHA-256
+   │
+   ▼
+ Hash
+
+Bước 3: Alice tạo chữ ký số
+
+Alice sử dụng Private Key của mình để ký giá trị Hash:
+
+Signature = RSA_Sign(
+    PrivateKey_Alice,
+    Hash(Message)
+)
+Bước 4: Alice gửi dữ liệu cho Bob
+
+Alice gửi:
+
+Message + Signature
+
+Bước 5: Bob xác minh chữ ký
+
+Bob sử dụng:
+
+PublicKey_Alice
+
+để kiểm tra chữ ký.
+
+Bob đồng thời tính lại:
+
+Hash(Message)
+
+Sau đó kiểm tra:
+
+Hash tính lại
+      =
+Hash được xác minh từ chữ ký?
+
+Nếu đúng:
+
+✓ Chữ ký hợp lệ
+
+✓ Xác nhận người sở hữu Private Key_Alice đã ký
+
+✓ Dữ liệu chưa bị thay đổi
+
+Nếu sai:
+
+✗ Chữ ký không hợp lệ
+
+✗ Có thể dữ liệu đã bị thay đổi
+
+✗ Hoặc chữ ký không được tạo bởi khóa tương ứng
+
+Mô hình RSA xác thực người nhận
+
+Mục đích
+
+Mô hình này tập trung vào việc đảm bảo:
+
+Chỉ Bob mới có thể giải mã và đọc được nội dung mà Alice gửi.
+
+Alice sử dụng Public Key của Bob để mã hóa.
+
+Bob sử dụng Private Key của Bob để giải mã.
+
+Mô hình hoạt động
+
+                    ALICE
+                 Người gửi
+                     │
+                     │ Message M
+                     ▼
+          ┌────────────────────────┐
+          │    Public Key - Bob    │
+          └────────────────────────┘
+                     │
+                     ▼
+               RSA Encryption
+                     │
+                     ▼
+                Ciphertext
+                     │
+                     │ Gửi qua mạng
+                     ▼
+                    BOB
+                Người nhận
+                     │
+                     ▼
+          ┌────────────────────────┐
+          │   Private Key - Bob   │
+          └────────────────────────┘
+                     │
+                     ▼
+               RSA Decryption
+                     │
+                     ▼
+                  Message M
+
+Các bước thực hiện
+
+Bước 1: Alice tạo thông điệp
+
+M = "Thong tin bi mat"
+
+Bước 2: Alice lấy Public Key của Bob
+
+PublicKey_Bob
+
+Bước 3: Alice mã hóa
+
+C = RSA_Encrypt(
+    PublicKey_Bob,
+    M
+)
+
+Kết quả:
+
+Message
+   │
+   ▼
+RSA + Public Key Bob
+   │
+   ▼
+Ciphertext
+Bước 4: Alice gửi Ciphertext cho Bob
+Alice
+  │
+  │ Ciphertext
+  ▼
+Internet
+  │
+  ▼
+Bob
+
+Nếu kẻ tấn công lấy được Ciphertext thì không thể dễ dàng đọc được nội dung nếu không có Private Key tương ứng của Bob.
+
+Bước 5: Bob giải mã
+
+Bob sử dụng Private Key:
+
+PrivateKey_Bob
+
+để giải mã:
+
+M = RSA_Decrypt(
+    PrivateKey_Bob,
+    C
+)
+
+Kết quả:
+
+Ciphertext
+     │
+     ▼
+Private Key Bob
+     │
+     ▼
+Original Message
+
+ Ý nghĩa bảo mật
+
+Mô hình này cung cấp tính bí mật (Confidentiality).
+
+Có thể hiểu đơn giản:
+
+Alice
+  │
+  │ Mã hóa bằng Public Key của Bob
+  ▼
+Ciphertext
+  │
+  │ Chỉ Private Key của Bob có thể giải mã
+  ▼
+Bob
+
+
+Mô hình RSA xác thực cả người gửi và người nhận
+
+Mục đích
+
+Đây là mô hình kết hợp hai yêu cầu:
+
+Xác thực người gửi.
+
+Đảm bảo chỉ người nhận có thể đọc dữ liệu.
+
+Alice muốn Bob biết rằng:
+
+✓ Dữ liệu thực sự được Alice gửi.
+
+✓ Dữ liệu không bị thay đổi.
+
+✓ Chỉ Bob có thể đọc nội dung.
+
+Mô hình sử dụng:
+
+Private Key_Alice
+
+Public Key_Alice
+
+Public Key_Bob
+
+Private Key_Bob
+Mô hình hoạt động
+
+                         ALICE
+                      Người gửi
+                          │
+                          │
+                     Message M
+                          │
+                          ▼
+                    Hash(Message)
+                          │
+                          ▼
+              ┌──────────────────────┐
+              │ Private Key - Alice  │
+              └──────────────────────┘
+                          │
+                          ▼
+                    Digital Signature
+                          │
+                          ▼
+                  Message + Signature
+                          │
+                          ▼
+              ┌──────────────────────┐
+              │   Public Key - Bob   │
+              └──────────────────────┘
+                          │
+                          ▼
+                    RSA Encryption
+                          │
+                          ▼
+                  Encrypted Package
+                          │
+                          │
+                     Internet
+                          │
+                          ▼
+                          BOB
+                     Người nhận
+                          │
+                          ▼
+              ┌──────────────────────┐
+              │  Private Key - Bob   │
+              └──────────────────────┘
+                          │
+                          ▼
+                    RSA Decryption
+                          │
+                          ▼
+                  Message + Signature
+                          │
+              ┌───────────┴───────────┐
+              │                       │
+              ▼                       ▼
+       Hash(Message)           Verify Signature
+                                      │
+                                      ▼
+                             Public Key - Alice
+                                      │
+                                      ▼
+                              Signature hợp lệ
+
+Các bước thực hiện
+
+Bước 1: Alice tạo Hash
+
+H = Hash(Message)
+
+Bước 2: Alice ký bằng Private Key
+
+Signature = RSA_Sign(
+    PrivateKey_Alice,
+    H
+)
+
+Bước 3: Tạo gói dữ liệu
+
+Package = Message + Signature
+
+Bước 4: Mã hóa bằng Public Key của Bob
+
+Ciphertext = RSA_Encrypt(
+    PublicKey_Bob,
+    Package
+)
+
+Bước 5: Gửi Ciphertext
+
+Alice
+  │
+  │ Ciphertext
+  ▼
+Network
+  │
+  ▼
+Bob
+
+Bước 6: Bob giải mã
+
+Package = RSA_Decrypt(
+    PrivateKey_Bob,
+    Ciphertext
+)
+
+Bob nhận được:
+
+Message + Signature
+
+Bước 7: Bob xác minh chữ ký
+
+Bob sử dụng:
+
+PublicKey_Alice
+
+để xác minh:
+
+Verify(
+    PublicKey_Alice,
+    Message,
+    Signature
+)
+
+Nếu hợp lệ:
+
+✓ Xác thực được chữ ký của Alice
+
+✓ Dữ liệu chưa bị thay đổi
+
+✓ Nội dung đã được bảo vệ khi truyền đến Bob
+
+So sánh thời gian mã hóa và giải mã RSA với AES
+
+Tổng quan
+
+RSA và AES là hai loại thuật toán mật mã khác nhau.
+
+<img width="747" height="621" alt="image" src="https://github.com/user-attachments/assets/e3cc8e29-e010-49b1-a32f-8171c620c691" />
+
+
+So sánh tốc độ
+
+Khi xử lý cùng một lượng dữ liệu, AES thường nhanh hơn RSA rất nhiều.
+
+Minh họa:
+
+Thời gian xử lý
+│
+│                         RSA
+│                         ███████████████████
+│
+│
+│
+│     AES
+│     █
+│     █
+│     █
+│
+└──────────────────────────────────►
+             Dữ liệu
+
+AES được thiết kế để mã hóa dữ liệu với tốc độ cao.
+
+RSA sử dụng các phép toán số học trên các số nguyên rất lớn nên chi phí tính toán cao hơn.
+
+Vì sao RSA chậm hơn AES?
+
+RSA sử dụng các phép toán trên số nguyên lớn.
+
+Về mặt khái niệm, RSA thực hiện các phép toán dạng:
+
+C = M^e mod n
+
+và:
+
+M = C^d mod n
+
+Trong đó n, e, d có thể là các số nguyên rất lớn.
+
+Các kích thước khóa RSA thường gặp:
+
+RSA-2048
+
+RSA-3072
+
+RSA-4096
+
+Trong khi đó AES được thiết kế để xử lý dữ liệu theo các khối 128 bit:
+
+AES-128
+
+AES-192
+
+AES-256
+
+AES có thể xử lý dữ liệu rất nhanh và trên nhiều CPU còn được hỗ trợ tăng tốc bằng phần cứng.
+
+Ví dụ về dữ liệu lớn
+
+Giả sử cần mã hóa:
+
+10 KB
+
+100 KB
+
+1 MB
+
+10 MB
+
+100 MB
+
+1 GB
+
+AES có thể trực tiếp xử lý các dữ liệu này:
+
+File
+ │
+ ▼
+AES
+ │
+ ▼
+Encrypted File
+
+Trong khi RSA không được thiết kế để mã hóa trực tiếp các file lớn.
+
+Do đó không nên thực hiện:
+
+File 1 GB
+   │
+   ▼
+  RSA
+   │
+   ▼
+Encrypted File
+
+Mà nên sử dụng:
+
+File 1 GB
+   │
+   ▼
+  AES
+   │
+   ▼
+Encrypted File
+
+RSA chỉ đảm nhận một phần nhỏ, chẳng hạn bảo vệ khóa AES.
+
+Thực nghiệm đo thời gian
+
+Để so sánh công bằng, có thể xây dựng chương trình thử nghiệm:
+
+                  CHƯƠNG TRÌNH TEST
+                         │
+             ┌───────────┴───────────┐
+             │                       │
+            RSA                     AES
+             │                       │
+       Mã hóa dữ liệu          Mã hóa dữ liệu
+             │                       │
+       Đo thời gian             Đo thời gian
+             │                       │
+       Giải mã dữ liệu          Giải mã dữ liệu
+             │                       │
+       Đo thời gian             Đo thời gian
+             │                       │
+             └───────────┬───────────┘
+                         │
+                         ▼
+                   So sánh kết quả
+
+Có thể thử với các kích thước dữ liệu khác nhau:
+
+10 KB
+
+100 KB
+
+1 MB
+
+10 MB
+
+100 MB
+
+Tuy nhiên, đối với RSA nên thực nghiệm trên dữ liệu nhỏ hoặc đo các thao tác RSA phù hợp, vì RSA không được thiết kế để mã hóa file lớn trực tiếp.
+
+Các yếu tố ảnh hưởng đến thời gian
+
+Thời gian mã hóa và giải mã phụ thuộc vào:
+
+CPU
+
+RAM
+
+Hệ điều hành
+
+Ngôn ngữ lập trình
+
+Thư viện mã hóa
+
+Kích thước khóa RSA
+
+Loại AES
+
+Chế độ hoạt động của AES
+
+Kích thước dữ liệu
+
+Khả năng tăng tốc phần cứng
+
+Do đó khi thực nghiệm cần sử dụng cùng:
+
+Máy tính
++
+Hệ điều hành
++
+Ngôn ngữ
++
+Thư viện
++
+Kích thước dữ liệu
+
+để kết quả có tính so sánh.
+
+Kết hợp sức mạnh của RSA và AES
+
+RSA và AES có các ưu điểm khác nhau.
+
+RSA có ưu điểm
+
+✓ Sử dụng Public Key và Private Key
+
+✓ Có thể xác thực bằng chữ ký số
+
+✓ Có thể bảo vệ khóa phiên
+
+✓ Không cần gửi Secret Key trực tiếp dưới dạng plaintext
+
+RSA có nhược điểm
+
+✗ Tốc độ chậm hơn AES
+
+✗ Chi phí tính toán cao
+
+✗ Không phù hợp với dữ liệu lớn
+
+AES có ưu điểm
+
+✓ Tốc độ cao
+
+✓ Phù hợp dữ liệu lớn
+
+✓ Phù hợp mã hóa file
+
+✓ Chi phí tính toán thấp hơn RSA
+
+AES có nhược điểm
+
+✗ Hai bên phải có cùng Secret Key
+
+✗ Cần cơ chế an toàn để trao đổi khóa
+
+Vì vậy có thể kết hợp:
+
+RSA → Bảo vệ / trao đổi AES Key
+
+AES → Mã hóa dữ liệu
+
+Mô hình này được gọi là:
+
+Hybrid Encryption – Mã hóa lai
+
+
+Mô hình Hybrid Encryption RSA + AES
+
+Sơ đồ tổng quát
+                         ALICE
+                     Người gửi
+                         │
+                         ▼
+                    Dữ liệu gốc
+                         │
+                         │
+                         ▼
+              ┌─────────────────────┐
+              │ Tạo AES Session Key │
+              └─────────────────────┘
+                         │
+                  ┌──────┴──────┐
+                  │             │
+                  ▼             ▼
+             AES Session      Dữ liệu
+                 Key              │
+                  │               ▼
+                  │          AES Encrypt
+                  │               │
+                  │               ▼
+                  │          Ciphertext
+                  │
+                  ▼
+             RSA Encrypt
+                  │
+             Public Key Bob
+                  │
+                  ▼
+          Encrypted AES Key
+                  │
+                  │
+          ┌───────┴────────┐
+          │  Gửi qua mạng  │
+          └───────┬────────┘
+                  │
+        ┌─────────┴─────────┐
+        ▼                   ▼
+Encrypted AES Key       Ciphertext
+        │                   │
+        └─────────┬─────────┘
+                  │
+                  ▼
+                 BOB
+             Người nhận
+                  │
+                  ▼
+             RSA Decrypt
+             Private Key Bob
+                  │
+                  ▼
+              AES Key
+                  │
+                  ▼
+             AES Decrypt
+                  │
+                  ▼
+              Dữ liệu gốc
+
+
+Các bước hoạt động của RSA + AES
+
+Bước 1: Alice tạo AES Session Key
+
+Alice tạo một khóa AES ngẫu nhiên:
+
+AES_Key = Random()
+
+Ví dụ:
+
+AES-256 → khóa 256 bit
+
+Khóa này được sử dụng cho phiên giao tiếp hiện tại.
+
+Bước 2: Alice dùng AES để mã hóa dữ liệu
+
+Ciphertext = AES_Encrypt(
+    AES_Key,
+    Data
+)
+
+Ví dụ:
+
+File
+ │
+ ▼
+AES-256
+ │
+ ▼
+Encrypted File
+
+AES đảm nhận việc mã hóa dữ liệu lớn.
+
+Bước 3: Alice dùng RSA để mã hóa AES Key
+
+Alice sử dụng Public Key của Bob:
+
+Encrypted_AES_Key = RSA_Encrypt(
+    PublicKey_Bob,
+    AES_Key
+)
+
+Điểm quan trọng là RSA chỉ mã hóa:
+
+AES Key
+
+chứ không mã hóa toàn bộ file.
+
+Bước 4: Alice gửi dữ liệu
+
+Alice gửi:
+
+Encrypted_AES_Key
++
+Ciphertext
+
+Có thể biểu diễn:
+
+┌───────────────────────────────┐
+│ Encrypted AES Key             │
+├───────────────────────────────┤
+│ AES Ciphertext                │
+└───────────────────────────────┘
+Bước 5: Bob giải mã AES Key
+
+Bob sử dụng Private Key của mình:
+
+AES_Key = RSA_Decrypt(
+    PrivateKey_Bob,
+    Encrypted_AES_Key
+)
+Bước 6: Bob giải mã dữ liệu
+
+Bob sử dụng AES Key vừa lấy được:
+
+Data = AES_Decrypt(
+    AES_Key,
+    Ciphertext
+)
+
+Kết quả:
+
+Encrypted File
+      │
+      ▼
+    AES Key
+      │
+      ▼
+Original File
+
+Kết hợp RSA + AES + Chữ ký số
+
+Có thể mở rộng mô hình bằng cách kết hợp:
+
+RSA
+ │
+ ├── Bảo vệ AES Key
+ │
+ └── Chữ ký số
+
+AES
+ │
+ └── Mã hóa dữ liệu
+
+Mô hình:
+
+                         ALICE
+                           │
+                           ▼
+                         DATA
+                           │
+              ┌────────────┴────────────┐
+              │                         │
+              ▼                         ▼
+        Hash(DATA)                    AES
+              │                         │
+              ▼                         ▼
+      RSA Signature              Ciphertext
+      Private Key Alice
+              │
+              │
+              ▼
+       Digital Signature
+
+                    AES Session Key
+                           │
+                           ▼
+                   RSA Encryption
+                   Public Key Bob
+                           │
+                           ▼
+                  Encrypted AES Key
+
+Alice gửi cho Bob:
+
+Ciphertext
++
+Encrypted AES Key
++
+Digital Signature
+
+Bob thực hiện:
+
+Encrypted AES Key
+        │
+        ▼
+RSA Decrypt
+Private Key Bob
+        │
+        ▼
+AES Session Key
+        │
+        ▼
+AES Decrypt
+        │
+        ▼
+Original Data
+        │
+        ▼
+Verify Signature
+        │
+        ▼
+Public Key Alice
+
+Nếu chữ ký hợp lệ:
+
+✓ Xác thực người gửi
+
+✓ Kiểm tra tính toàn vẹn dữ liệu
+
+✓ Dữ liệu được mã hóa
+
+✓ Chỉ Bob có thể lấy AES Key
