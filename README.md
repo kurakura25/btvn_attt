@@ -692,31 +692,11 @@ M = RSA_Decrypt(
     C
 )
 
-Kết quả:
-
-Ciphertext
-     │
-     ▼
-Private Key Bob
-     │
-     ▼
-Original Message
 
  Ý nghĩa bảo mật
 
 Mô hình này cung cấp tính bí mật (Confidentiality).
 
-Có thể hiểu đơn giản:
-
-Alice
-  │
-  │ Mã hóa bằng Public Key của Bob
-  ▼
-Ciphertext
-  │
-  │ Chỉ Private Key của Bob có thể giải mã
-  ▼
-Bob
 
 
 Mô hình RSA xác thực cả người gửi và người nhận
@@ -834,15 +814,6 @@ Ciphertext = RSA_Encrypt(
 
 Bước 5: Gửi Ciphertext
 
-Alice
-  │
-  │ Ciphertext
-  ▼
-Network
-  │
-  ▼
-Bob
-
 Bước 6: Bob giải mã
 
 Package = RSA_Decrypt(
@@ -942,42 +913,6 @@ Giả sử cần mã hóa:
 1 GB
 
 
-Thực nghiệm đo thời gian
-
-Để so sánh công bằng, có thể xây dựng chương trình thử nghiệm:
-
-                  CHƯƠNG TRÌNH TEST
-                         │
-             ┌───────────┴───────────┐
-             │                       │
-            RSA                     AES
-             │                       │
-       Mã hóa dữ liệu          Mã hóa dữ liệu
-             │                       │
-       Đo thời gian             Đo thời gian
-             │                       │
-       Giải mã dữ liệu          Giải mã dữ liệu
-             │                       │
-       Đo thời gian             Đo thời gian
-             │                       │
-             └───────────┬───────────┘
-                         │
-                         ▼
-                   So sánh kết quả
-
-Có thể thử với các kích thước dữ liệu khác nhau:
-
-10 KB
-
-100 KB
-
-1 MB
-
-10 MB
-
-100 MB
-
-Tuy nhiên, đối với RSA nên thực nghiệm trên dữ liệu nhỏ hoặc đo các thao tác RSA phù hợp, vì RSA không được thiết kế để mã hóa file lớn trực tiếp.
 
 Các yếu tố ảnh hưởng đến thời gian
 
@@ -1068,67 +1003,6 @@ Hybrid Encryption – Mã hóa lai
 
 Mô hình Hybrid Encryption RSA + AES
 
-Sơ đồ tổng quát
-                         ALICE
-                     Người gửi
-                         │
-                         ▼
-                    Dữ liệu gốc
-                         │
-                         │
-                         ▼
-              ┌─────────────────────┐
-              │ Tạo AES Session Key │
-              └─────────────────────┘
-                         │
-                  ┌──────┴──────┐
-                  │             │
-                  ▼             ▼
-             AES Session      Dữ liệu
-                 Key              │
-                  │               ▼
-                  │          AES Encrypt
-                  │               │
-                  │               ▼
-                  │          Ciphertext
-                  │
-                  ▼
-             RSA Encrypt
-                  │
-             Public Key Bob
-                  │
-                  ▼
-          Encrypted AES Key
-                  │
-                  │
-          ┌───────┴────────┐
-          │  Gửi qua mạng  │
-          └───────┬────────┘
-                  │
-        ┌─────────┴─────────┐
-        ▼                   ▼
-Encrypted AES Key       Ciphertext
-        │                   │
-        └─────────┬─────────┘
-                  │
-                  ▼
-                 BOB
-             Người nhận
-                  │
-                  ▼
-             RSA Decrypt
-             Private Key Bob
-                  │
-                  ▼
-              AES Key
-                  │
-                  ▼
-             AES Decrypt
-                  │
-                  ▼
-              Dữ liệu gốc
-
-
 Các bước hoạt động của RSA + AES
 
 Bước 1: Alice tạo AES Session Key
@@ -1152,13 +1026,7 @@ Ciphertext = AES_Encrypt(
 
 Ví dụ:
 
-File
- │
- ▼
-AES-256
- │
- ▼
-Encrypted File
+File -> AES-256 -> Encrypted File
 
 AES đảm nhận việc mã hóa dữ liệu lớn.
 
@@ -1180,18 +1048,10 @@ chứ không mã hóa toàn bộ file.
 Bước 4: Alice gửi dữ liệu
 
 Alice gửi:
-
 Encrypted_AES_Key
 +
 Ciphertext
 
-Có thể biểu diễn:
-
-┌───────────────────────────────┐
-│ Encrypted AES Key             │
-├───────────────────────────────┤
-│ AES Ciphertext                │
-└───────────────────────────────┘
 Bước 5: Bob giải mã AES Key
 
 Bob sử dụng Private Key của mình:
@@ -1212,77 +1072,6 @@ Data = AES_Decrypt(
 
 Kết hợp RSA + AES + Chữ ký số
 
-Có thể mở rộng mô hình bằng cách kết hợp:
-
-RSA
- │
- ├── Bảo vệ AES Key
- │
- └── Chữ ký số
-
-AES
- │
- └── Mã hóa dữ liệu
-
-Mô hình:
-
-                         ALICE
-                           │
-                           ▼
-                         DATA
-                           │
-              ┌────────────┴────────────┐
-              │                         │
-              ▼                         ▼
-        Hash(DATA)                    AES
-              │                         │
-              ▼                         ▼
-      RSA Signature              Ciphertext
-      Private Key Alice
-              │
-              │
-              ▼
-       Digital Signature
-
-                    AES Session Key
-                           │
-                           ▼
-                   RSA Encryption
-                   Public Key Bob
-                           │
-                           ▼
-                  Encrypted AES Key
-
-Alice gửi cho Bob:
-
-Ciphertext
-+
-Encrypted AES Key
-+
-Digital Signature
-
-Bob thực hiện:
-
-Encrypted AES Key
-        │
-        ▼
-RSA Decrypt
-Private Key Bob
-        │
-        ▼
-AES Session Key
-        │
-        ▼
-AES Decrypt
-        │
-        ▼
-Original Data
-        │
-        ▼
-Verify Signature
-        │
-        ▼
-Public Key Alice
 
 Nếu chữ ký hợp lệ:
 
