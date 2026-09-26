@@ -237,7 +237,9 @@ $(d \times e)$ cho $\phi(n)$
 
 số dư phải là 1. Người ta thường dùng Thuật toán Euclid mở rộng để tìm ra $d$.
 
-Sau 5 bước trên, chúng ta thu được cặp khóa:Khóa công khai (Public Key): Cặp số $(n, e)$.
+Sau 5 bước trên, chúng ta thu được cặp khóa:
+
+Khóa công khai (Public Key): Cặp số $(n, e)$.
 
 Bạn gửi cặp số này cho bất kỳ ai để họ mã hóa dữ liệu gửi cho bạn.
 
