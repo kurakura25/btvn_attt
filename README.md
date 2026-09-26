@@ -109,4 +109,26 @@ Sau bước AddRoundKey cuối cùng, ma trận State chính là bản mã hóa 
 
 - Quy trình giải mã: Sử dụng các hàm đảo ngược (InvSubBytes, InvShiftRows, InvMixColumns) và áp dụng các khóa vòng theo thứ tự từ cuối lên đầu.
 
+Khởi tạo: Nạp dữ liệu vào Ma trận State
 
+Đầu tiên, máy tính chuyển chuỗi ký tự thành mã Hex (hệ thập lục phân) theo bảng mã ASCII
+Dữ liệu được xếp vào một ma trận 4x4 (gọi là ma trận State) theo thứ tự từ trên xuống dưới, từ trái qua phải (từng cột một)
+$$\begin{bmatrix} 4D & 4F & 45 & 32 \\ 
+41 & 41 & 53 & 33 \\ 
+5F & 5F & 5F & 34 \\ 
+48 & 41 & 31 & 35 \end{bmatrix}$$
+
+Trước khi bắt đầu các vòng lặp, ma trận này được XOR với Khóa bí mật (AddRoundKey vòng 0). 
+
+SubBytes (Thay chữ)
+AES sử dụng một bảng tra cứu cố định có tên là S-Box. Bảng này định nghĩa sẵn rằng mọi byte đầu vào sẽ bị thay bằng một byte hoàn toàn khác.
+
+Ví dụ với ký tự đầu tiên là 4D (nằm ở hàng 1, cột 1 của ma trận):
+
+AES tách 4D ra: 4 là chỉ số hàng, D là chỉ số cột trong bảng S-Box.
+
+Giao điểm của hàng 4 và cột D trong bảng S-Box là giá trị E3.
+
+Vậy 4D bị đổi thành E3.
+
+Thuật toán làm tương tự cho cả 16 byte. Giả sử sau khi tra bảng xong, ta thu được ma trận mới:
