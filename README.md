@@ -3,8 +3,8 @@
 ## Họ và tên: Từ Văn Hải
 ## Lớp: K59.KMT.K01
 
-1. 
-
+1. Tìm hiểu thuật toán mã hoá hiện đại DES, AES mô tả đc thuật toán, quy trình mã hoá/giải mã
+   
 Thuật toán mã hóa DES (Data Encryption Standard)
 
 Được IBM phát triển và chính phủ Mỹ áp dụng làm tiêu chuẩn vào năm 1977, DES hiện tại đã bị coi là lỗi thời và không còn an toàn do độ dài khóa quá ngắn.
@@ -16,10 +16,7 @@ Kích thước khóa (Key size): 64-bit, nhưng 8 bit được dùng để kiể
 
 Cấu trúc lõi: Mạng Feistel (Feistel Network) với 16 vòng (rounds).
 
-
-
 Quy trình mã hóa tổng thể
-
 
 
 * Hoán vị ban đầu (Initial Permutation - IP): Đổi chỗ các bit trong khối 64-bit đầu vào theo một bảng định sẵn.
@@ -50,6 +47,137 @@ Tại mỗi vòng thứ i (với i từ 1 đến 16), thuật toán sử dụng 
 
 Trong đó $\\oplus$ là phép toán XOR, và $F$ là Hàm Feistel (F-Function) — thành phần quan trọng nhất tạo nên tính phi tuyến tính của DES.
 
+Hàm Feistel $F(R_{i-1}, K_i)
+
+$Hàm $F$ nhận đầu vào là nửa khối $R_{i-1}$ (32-bit) và khóa con $K_i$ (48-bit) để trả về một chuỗi 32-bit:
+
+Mở rộng (Expansion - E-box): 
+
+Mở rộng chuỗi $R_{i-1}$ từ 32-bit thành 48-bit bằng cách nhân bản một số bit theo bảng mở rộng E.
+
+Cộng khóa con (XOR): Lấy kết quả 48-bit vừa mở rộng XOR với khóa con $K_i$ 48-bit.
+
+Thay thế (Substitution - S-boxes):Chia chuỗi 48-bit sau khi XOR thành 8 nhóm, mỗi nhóm 6-bit.
+
+Mỗi nhóm 6-bit được đưa qua một hộp thay thế $S_j$ ($j = 1 \dots 8$) để thu về 4-bit.
+
+Cách tra S-box: Bit đầu (1) và bit cuối (6) ghép lại tạo thành số hàng (0–3). 
+
+4 bit giữa (2–5) ghép lại tạo thành số cột (0–15).
+
+Gộp 8 kết quả 4-bit lại thành chuỗi 32-bit.
+
+Hoán vị (Permutation - P-box): Xáo trộn vị trí của chuỗi 32-bit sau S-box theo một bảng hoán vị P cố định nhằm tạo sự khuếch tán (diffusion).
+
+Thuật toán sinh khóa con (Key Schedule)
+
+Từ khóa chính 64-bit, DES tạo ra 16 khóa con $K_1, K_2, \dots, K_{16}$ (mỗi khóa 48-bit) như sau:
+
+Biến đổi PC-1 (Permuted Choice 1): 
+
+Loại bỏ 8 bit kiểm tra chẵn lẻ (các bit thứ 8, 16, 24, 32, 40, 48, 56, 64), hoán vị 56 bit còn lại và chia thành hai nửa 28-bit: $C_0$ và $D_0$.
+
+Dịch trái xoay vòng (Left Circular Shift): Tại mỗi vòng $i$:Cả $C_{i-1}$ và $D_{i-1}$ được dịch trái xoay vòng 1 bit (ở các vòng 1, 2, 9, 16) hoặc 2 bit (ở các vòng còn lại) để tạo thành $C_i$ và $D_i$.
+
+Biến đổi PC-2 (Permuted Choice 2): Ghép $C_i$ và $D_i$ thành 56-bit, sau đó chọn ra và hoán vị 48-bit để thu được khóa con $K_i$.
+
+Quy trình giải mã
+
+Nhờ tính chất toán học của mạng Feistel, quy trình giải mã DES dùng chung thuật toán với quy trình mã hóa.
+
+Đầu vào giải mã là Bản mã (Ciphertext) 64-bit.
+
+Điểm khác biệt duy nhất: Các khóa con $K_i$ được đưa vào quy trình theo thứ tự ngược lại, bắt đầu từ $K_{16}$ giảm dần về $K_1$.
+
+Mô tả thuật toán:
+
+Để hiểu rõ cơ chế hoạt động của DES, dưới đây là ví dụ minh họa chi tiết từng bước cho 1 vòng lặp (Vòng 1) của thuật toán.
+
+Do quy trình chuẩn của DES xử lý trên 64 bit (16 ký tự Hex) rất dài, ví dụ này sẽ rút gọn phần hiển thị chuỗi bit nhưng giữ nguyên chính xác logic toán học của từng bước.
+
+Dữ liệu đầu vào (Giả định)
+
+Bản rõ (Plaintext 64-bit): 0123456789ABCDEF (dạng Hex)
+
+Khóa chính (Key 64-bit): 133457799BBCDFF1 (dạng Hex)
+
+Bước 1: Hoán vị ban đầu (IP - Initial Permutation)
+
+Chuyển bản rõ thành 64 bit nhị phân và đảo vị trí các bit theo bảng hoán vị IP chuẩn:
+
+Đầu vào (64 bit): 
+
+00000001 00100011 01000101 01100111 10001001 10101011 11001101 11101111Sau khi hoán vị IP: Dữ liệu xáo trộn thành chuỗi 64-bit mới.
+
+Chia đôi khối dữ liệu thành 2 nửa 32-bit:$L_0$ (32 bit trái): 11001100 00000000 11001100 00000000 (Hex: CC00CC00)$R_0$ (32 bit phải): 11111010 11111010 11010000 00000100 (Hex: FAFADA04)3. 
+
+Bước 2: Sinh khóa con $K_1$ cho Vòng 1Khóa gốc 64 bit qua bảng PC-1 bị bỏ đi 8 bit kiểm tra, còn lại 56 bit.
+
+Chia thành $C_0$ (28 bit) và $D_0$ (28 bit).
+
+Ở Vòng 1, dịch trái xoay vòng $C_0$ và $D_0$ đi 1 bit thu được $C_1$ và $D_1$.
+
+Ghép $C_1D_1$ lại và đưa qua bảng PC-2 để chọn ra 48 bit làm khóa con $K_1$.
+
+Giả sử $K_1$ thu được là: 000110 110000 001111 111100 000011 101100 111100 011100 (48 bit).
+
+Bước 3: Tính toán Vòng 1 (Round 1)
+
+Mục tiêu là tính cặp $(L_1, R_1)$ theo công thức:$L_1 = R_0$$R_1 = L_0 \oplus F(R_0, K_1)$
+
+Thực thi Hàm Feistel $F(R_0, K_1)$:
+
+Tác vụ 1: 
+
+Mở rộng $R_0$ (Expansion E-box)
+
+Biến $R_0$ (32 bit) thành 48 bit bằng cách nhân bản các bit ở mép:$$E(R_0) = \text{Chuỗi 48 bit mới}$$
+
+Tác vụ 2: Cộng khóa con (XOR với $K_1$)Lấy $E(R_0)$ 48 bit XOR với $K_1$ 48 bit.
+
+$$A = E(R_0) \oplus K_1 = \text{Chuỗi 48 bit kết quả}$$
+
+Tác vụ 3: Biến đổi qua các Hộp S (S-Boxes)Chia chuỗi $A$ (48 bit) thành 8 nhóm, mỗi nhóm 6 bit: $B_1, B_2, \dots, B_8$.
+
+Chi tiết cách tra S-box cho Nhóm 1 ($B_1$):
+
+Giả sử 6 bit của $B_1$ là: 011011
+
+Xác định Hàng: Lấy bit đầu (0) và bit cuối (1) $\rightarrow$ 
+
+Chuỗi 01 = Hàng 1 (tính từ 0, 1, 2, 3).
+
+Xác định Cột: Lấy 4 bit giữa (1101) $\rightarrow$ Chuỗi 1101 = Cột 13 (tính từ 0 đến 15).
+
+Tra bảng $S_1$: Giao giữa Hàng 1 và Cột 13 trong bảng $S_1$ là số 5 (biểu diễn 4 bit nhị phân là 0101).Làm tương tự cho 7 nhóm còn lại, ta chuyển từ 8 nhóm (mỗi nhóm 6 bit) thành 8 nhóm (mỗi nhóm 4 bit) và gộp lại thu được chuỗi 32 bit.
+
+Tác vụ 4: Hoán vị P (P-box)Xáo trộn 32 bit thu được từ bước S-box qua bảng hoán vị P cố định. 
+
+Kết quả nhận được chính là đầu ra của hàm $F(R_0, K_1)$ (32 bit).Tính giá trị $R_1$:Lấy $L_0$ (32 bit) XOR với kết quả hàm $F(R_0, K_1)$ (32 bit) vừa tính ra:
+
+$$R_1 = L_0 \oplus F(R_0, K_1)$$
+
+Kết quả sau Vòng 1
+
+Ta thu được cặp dữ liệu mới sau 
+
+Vòng 1:
+
+$L_1 = R_0$ (lấy nguyên trạng $R_0$ ban đầu)$R_1$ (kết quả vừa tính toán được từ phép XOR)
+
+Cặp $(L_1, R_1)$ này sẽ đóng vai trò là đầu vào $(L, R)$ cho Vòng 2, kết hợp với khóa con $K_2$.6. 
+
+Kết thúc 16 vòng & Hoán vị FP
+
+Quá trình lặp lại tương tự đến hết Vòng 16, thu được $(L_{16}, R_{16})$.
+
+Tráo đổi: Đảo vị trí hai nửa thành $R_{16}L_{16}$.
+
+Hoán vị kết thúc (FP): Đưa chuỗi 64-bit $R_{16}L_{16}$ qua bảng hoán vị $FP$ (ngược lại với bảng $IP$ ban đầu).
+
+Bản mã cuối cùng (Ciphertext): 
+
+Ví dụ thu được chuỗi Hex 64-bit: 85E813540F0AB405.
 
 ### Thuật toán AES (Advanced Encryption Standard)
 AES (hay Rijndael) ra đời năm 2001 để thay thế DES. Đây là tiêu chuẩn mã hóa hiện đại, cực kỳ an toàn và đang được sử dụng phổ biến nhất trên toàn thế giới (từ Wifi, SSL/TLS, đến mã hóa tệp tin).
@@ -513,24 +641,8 @@ C = RSA_Encrypt(
     M
 )
 
-Kết quả:
 
-Message
-   │
-   ▼
-RSA + Public Key Bob
-   │
-   ▼
-Ciphertext
 Bước 4: Alice gửi Ciphertext cho Bob
-Alice
-  │
-  │ Ciphertext
-  ▼
-Internet
-  │
-  ▼
-Bob
 
 Nếu kẻ tấn công lấy được Ciphertext thì không thể dễ dàng đọc được nội dung nếu không có Private Key tương ứng của Bob.
 
