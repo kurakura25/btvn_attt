@@ -47,9 +47,9 @@ Tại mỗi vòng thứ i (với i từ 1 đến 16), thuật toán sử dụng 
 
 Trong đó $\\oplus$ là phép toán XOR, và $F$ là Hàm Feistel (F-Function) — thành phần quan trọng nhất tạo nên tính phi tuyến tính của DES.
 
-Hàm Feistel $F(R_{i-1}, K_i)
+Hàm Feistel $F(R_{i-1}, K_i)$
 
-$Hàm $F$ nhận đầu vào là nửa khối $R_{i-1}$ (32-bit) và khóa con $K_i$ (48-bit) để trả về một chuỗi 32-bit:
+Hàm $F$ nhận đầu vào là nửa khối $R_{i-1}$ (32-bit) và khóa con $K_i$ (48-bit) để trả về một chuỗi 32-bit:
 
 Mở rộng (Expansion - E-box): 
 
