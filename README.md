@@ -109,14 +109,15 @@ Sau bước AddRoundKey cuối cùng, ma trận State chính là bản mã hóa 
 
 - Quy trình giải mã: Sử dụng các hàm đảo ngược (InvSubBytes, InvShiftRows, InvMixColumns) và áp dụng các khóa vòng theo thứ tự từ cuối lên đầu.
 
+Mô tả thuật toán chi tiết:
+
 Khởi tạo: Nạp dữ liệu vào Ma trận State
 
 Đầu tiên, máy tính chuyển chuỗi ký tự thành mã Hex (hệ thập lục phân) theo bảng mã ASCII
 Dữ liệu được xếp vào một ma trận 4x4 (gọi là ma trận State) theo thứ tự từ trên xuống dưới, từ trái qua phải (từng cột một)
-$$\begin{bmatrix} 4D & 4F & 45 & 32 \\ 
-41 & 41 & 53 & 33 \\ 
-5F & 5F & 5F & 34 \\ 
-48 & 41 & 31 & 35 \end{bmatrix}$$
+
+<img width="322" height="175" alt="image" src="https://github.com/user-attachments/assets/3883fb56-43ef-4123-bacd-cd69a3c1d86a" />
+
 
 Trước khi bắt đầu các vòng lặp, ma trận này được XOR với Khóa bí mật (AddRoundKey vòng 0). 
 
@@ -132,3 +133,38 @@ Giao điểm của hàng 4 và cột D trong bảng S-Box là giá trị E3.
 Vậy 4D bị đổi thành E3.
 
 Thuật toán làm tương tự cho cả 16 byte. Giả sử sau khi tra bảng xong, ta thu được ma trận mới:
+
+<img width="361" height="192" alt="image" src="https://github.com/user-attachments/assets/28f8c0da-78b7-4d0b-892f-5cacdbe99577" />
+
+Bước 2: ShiftRows (Dịch hàng)
+Để dữ liệu không bị cô lập theo từng cột, AES đẩy lệch các hàng sang trái. Các byte bị đẩy ra khỏi ma trận bên trái sẽ vòng lại chui vào phía bên phải.
+
+Hàng 0: Giữ nguyên (Dịch 0 bước).
+
+Hàng 1: Dịch trái 1 bước (Byte 83 đầu tiên bị đẩy xuống cuối hàng).
+
+Hàng 2: Dịch trái 2 bước.
+
+Hàng 3: Dịch trái 3 bước (Tương đương dịch phải 1 bước).
+
+Sự biến đổi diễn ra như sau:
+
+<img width="692" height="177" alt="image" src="https://github.com/user-attachments/assets/6e972996-4ac0-4dd1-8eb5-64d480c27ae5" />
+
+Bước 3: MixColumns (Trộn cột)
+Ở bước này, AES lấy từng cột 4-byte riêng biệt và thực hiện phép nhân ma trận để trộn chúng lại với nhau.
+
+Xét cột đầu tiên của ma trận hiện tại: [E3, 83, CF, 96].
+
+Thuật toán lấy cột này nhân với một ma trận tiêu chuẩn trong Toán học trường Galois:
+<img width="408" height="187" alt="image" src="https://github.com/user-attachments/assets/63a68e28-5857-479e-8d76-fccecebb0b2a" />
+
+Sau phép toán phức tạp này, cột E3, 83, CF, 96 biến thành 5A, 1F, 67, B5. Điều đặc biệt của phép MixColumns là chỉ cần 1 byte trong cột ban đầu thay đổi (ví dụ E3 đổi thành E4), thì cả 4 byte ở cột kết quả đều sẽ thay đổi hoàn toàn. Điều này tạo ra hiệu ứng "hiệu ứng cánh bướm" (Avalanche effect) cực kỳ mạnh.
+
+Bước 4: AddRoundKey (Thêm khóa vòng)
+Ma trận State vừa trải qua 3 bước nhào lộn sẽ được trộn thêm một lần nữa với Khóa vòng 1 (Round Key 1 - được sinh ra từ khóa bí mật ban đầu). Phép trộn sử dụng
+
+toán tử logic XOR (Exclusive OR) từng bit một.
+
+Sau bước này, Vòng 1 kết thúc. Thuật toán lại lấy ma trận kết quả ném vào Vòng 2, làm y hệt các bước trên, và lặp lại liên tục 10 lần (với AES-128). Sau vòng cuối cùng, ma trận thu được chính là chuỗi ký tự mã hóa vô nghĩa mà hacker nhìn thấy.
+
