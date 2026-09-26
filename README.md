@@ -149,10 +149,9 @@ Bước 3: Tính toán Vòng 1 (Round 1)
 Mục tiêu là tính cặp $(L_1, R_1)$ theo công thức:
 
 
-$L_1 = R_0
+$L_1 = R_0$
 
-
-$$R_1 = L_0 \oplus F(R_0, K_1)$
+$R_1 = L_0 \oplus F(R_0, K_1)$
 
 Thực thi Hàm Feistel $F(R_0, K_1)$:
 
