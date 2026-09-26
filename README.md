@@ -201,7 +201,7 @@ Số $n$ này sẽ được sử dụng làm module cho cả khóa công khai v�
 
 Độ dài của $n$ (tính bằng bit) chính là "độ dài khóa" (ví dụ: khóa RSA 2048-bit nghĩa là $n$ dài 2048 bit). $n$ được công bố công khai.
 
-Bước 3: Tính hàm Phi Euler ($\phi(n)$)
+Bước 3: Tính hàm Phi Euler 
 
 Tính số lượng các số nguyên tố cùng nhau với $n$ (nhỏ hơn $n$). 
 
@@ -213,7 +213,11 @@ Giá trị $\phi(n)$ phải được giữ bí mật để phục vụ cho việ
 
 Bước 4: Chọn số mũ công khai ($e$)
 
-Chọn một số nguyên $e$ (public exponent) sao cho:$1 < e < \phi(n)$$e$ và $\phi(n)$ là hai số nguyên tố cùng nhau (tức là ước chung lớn nhất 
+Chọn một số nguyên $e$ (public exponent) sao cho:
+
+$1 < e < \phi(n)$
+
+ $e$  và $\phi(n)$ là hai số nguyên tố cùng nhau (tức là ước chung lớn nhất 
 
 $\text{ƯCLN}(e, \phi(n)) = 1$).
 
@@ -223,11 +227,23 @@ Bước 5: Tính số mũ bí mật ($d$)
 
 Tính số $d$ (private exponent) sao cho nó là nghịch đảo modulo của $e$ theo module $\phi(n)$. 
 
-Nói cách khác:$$d \times e \equiv 1 \pmod{\phi(n)}$$
+Nói cách khác:
 
-Điều này có nghĩa là khi chia $(d \times e)$ cho $\phi(n)$, số dư phải là 1. Người ta thường dùng Thuật toán Euclid mở rộng để tìm ra $d$.
+$$d \times e \equiv 1 \pmod{\phi(n)}$$
 
-Sau 5 bước trên, chúng ta thu được cặp khóa:Khóa công khai (Public Key): Cặp số $(n, e)$. Bạn gửi cặp số này cho bất kỳ ai để họ mã hóa dữ liệu gửi cho bạn.Khóa bí mật (Private Key): Cặp số $(n, d)$. Bạn phải giữ kín số $d$. Các thông số $p, q$ và $\phi(n)$ lúc này có thể bị xóa bỏ hoặc cất giấu, nhưng không bao giờ được tiết lộ.
+Điều này có nghĩa là khi chia 
+
+$(d \times e)$ cho $\phi(n)$
+
+số dư phải là 1. Người ta thường dùng Thuật toán Euclid mở rộng để tìm ra $d$.
+
+Sau 5 bước trên, chúng ta thu được cặp khóa:Khóa công khai (Public Key): Cặp số $(n, e)$.
+
+Bạn gửi cặp số này cho bất kỳ ai để họ mã hóa dữ liệu gửi cho bạn.
+
+Khóa bí mật (Private Key): Cặp số $(n, d)$. Bạn phải giữ kín số $d$. 
+
+Các thông số $p, q$ và $\phi(n)$ lúc này có thể bị xóa bỏ hoặc cất giấu, nhưng không bao giờ được tiết lộ.
 
 Ví dụ minh họa
 
